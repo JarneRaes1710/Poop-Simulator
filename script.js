@@ -58,29 +58,34 @@ async function handleAuth(type) {
     }
 }
 
-// 1. Add this new function to handle Guest Logins
 function playAsGuest() {
     currentUser = "Guest Player";
     
-    // Check if they have a local browser save from a previous session
+    // Check if they have a local browser save
     const localSave = localStorage.getItem('poop_sim_guest_save');
     
     if (localSave) {
-        const savedData = JSON.parse(localSave);
-        gameState.plops = savedData.plops || 0;
-        gameState.pps = savedData.pps || 0;
-        gameState.clickPower = savedData.clickPower || 1;
-        
-        // Catch up item prices based on their saved stats
-        recalculateUpgradeCosts();
+        try {
+            const savedData = JSON.parse(localSave);
+            gameState.plops = savedData.plops || 0;
+            gameState.pps = savedData.pps || 0;
+            gameState.clickPower = savedData.clickPower || 1;
+            
+            // Try to catch up item prices safely
+            if (typeof recalculateUpgradeCosts === "function") {
+                recalculateUpgradeCosts();
+            }
+        } catch (e) {
+            console.error("Error loading guest save, starting fresh:", e);
+        }
     } else {
-        // Fresh start for new guests
+        // Fresh start
         gameState.plops = 0;
         gameState.pps = 0;
         gameState.clickPower = 1;
     }
 
-    // Hide login screen and show the game
+    // --- THIS IS THE CRITICAL PART THAT SHOWS THE GAME ---
     document.getElementById('auth-overlay').style.display = 'none';
     document.getElementById('game-container').style.display = 'block';
     document.getElementById('display-user').textContent = currentUser;
@@ -174,12 +179,28 @@ function updateUI() {
 }
 
 function recalculateUpgradeCosts() {
-    // Basic scaling catch-up calculation for returning saves
+    // Reset costs to default first
+    gameState.upgrades.coffee.cost = 15;
+    gameState.upgrades.taco.cost = 100;
+    gameState.upgrades.laxative.cost = 500;
+    if(gameState.upgrades.chipotle) gameState.upgrades.chipotle.cost = 2500;
+
+    // Fast estimation helper to scale up costs based on current passive income
     let temporaryPps = gameState.pps;
     while (temporaryPps > 0) {
-        if (temporaryPps >= 50) { gameState.upgrades.laxative.cost = Math.floor(gameState.upgrades.laxative.cost * 1.15); temporaryPps -= 50; }
-        else if (temporaryPps >= 8) { gameState.upgrades.taco.cost = Math.floor(gameState.upgrades.taco.cost * 1.15); temporaryPps -= 8; }
-        else { gameState.upgrades.coffee.cost = Math.floor(gameState.upgrades.coffee.cost * 1.15); temporaryPps -= 1; }
+        if (gameState.upgrades.chipotle && temporaryPps >= 300) { 
+            gameState.upgrades.chipotle.cost = Math.floor(gameState.upgrades.chipotle.cost * 1.15); 
+            temporaryPps -= 300; 
+        } else if (temporaryPps >= 50) { 
+            gameState.upgrades.laxative.cost = Math.floor(gameState.upgrades.laxative.cost * 1.15); 
+            temporaryPps -= 50; 
+        } else if (temporaryPps >= 8) { 
+            gameState.upgrades.taco.cost = Math.floor(gameState.upgrades.taco.cost * 1.15); 
+            temporaryPps -= 8; 
+        } else { 
+            gameState.upgrades.coffee.cost = Math.floor(gameState.upgrades.coffee.cost * 1.15); 
+            temporaryPps -= 1; 
+        }
     }
 }
 
