@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poop Simulator MMO</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="auth-overlay" class="overlay">
+        <div class="auth-box">
+            <h2>💩 Welcome to Poop Tycoon 💩</h2>
+            <input type="text" id="auth-username" placeholder="Username">
+            <input type="password" id="auth-password" placeholder="Password">
+            <div class="auth-buttons">
+                <button onclick="handleAuth('login')">Log In</button>
+                <button onclick="handleAuth('register')">Register</button>
+            </div>
+            <p id="auth-error" class="error"></p>
+        </div>
+    </div>
+
+    <div id="game-container" class="sim-container" style="display: none;">
+        <header>
+            <div class="user-bar">Player: <span id="display-user">Guest</span> | <button onclick="saveGame()">💾 Save Progress</button></div>
+            <h1>Poop Simulator</h1>
+            <div class="stats">
+                <p>Total Plops: <span id="plop-count">0</span></p>
+                <p>Plops per Second (PPS): <span id="pps-count">0</span></p>
+            </div>
+        </header>
+
+        <main class="click-zone">
+            <div id="main-emoji" class="emoji-btn">🚽</div>
+        </main>
+
+        <section class="shop">
+            <h2>The Expanded Shop</h2>
+            <div class="upgrade-card" id="upgrade-coffee">
+                <div class="upgrade-info"><h3>☕ Strong Coffee</h3><p>Cost: <span class="cost">15</span></p></div>
+                <button class="buy-btn" onclick="buyUpgrade('coffee')">Buy</button>
+            </div>
+            <div class="upgrade-card" id="upgrade-taco">
+                <div class="upgrade-info"><h3>🌮 Taco Tuesday</h3><p>Cost: <span class="cost">100</span></p></div>
+                <button class="buy-btn" onclick="buyUpgrade('taco')">Buy</button>
+            </div>
+            <div class="upgrade-card" id="upgrade-laxative">
+                <div class="upgrade-info"><h3>🧪 Industrial Laxatives</h3><p>Cost: <span class="cost">500</span></p><small>+50 PPS</small></div>
+                <button class="buy-btn" onclick="buyUpgrade('laxative')">Buy</button>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
