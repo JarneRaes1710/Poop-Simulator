@@ -39,7 +39,8 @@ async function handleAuth(type) {
                 currentUser = data.username;
                 gameState.plops = data.plops;
                 gameState.pps = data.pps;
-                
+                gameState.clickPower = data.clickPower || 1; // Default to 1 if not provided
+
                 // Readjust upgrade scales based on passive income loadout
                 recalculateUpgradeCosts();
 
@@ -66,7 +67,8 @@ async function saveGame() {
         body: JSON.stringify({
             username: currentUser,
             plops: gameState.plops,
-            pps: gameState.pps
+            pps: gameState.pps,
+            clickPower: gameState.clickPower
         })
     });
     alert("Game Saved Successfully!");
