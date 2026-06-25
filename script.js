@@ -58,22 +58,67 @@ async function handleAuth(type) {
     }
 }
 
-// Save Progress to Backend
+// 1. Add this new function to handle Guest Logins
+function playAsGuest() {
+    currentUser = "Guest Player";
+    
+    // Check if they have a local browser save from a previous session
+    const localSave = localStorage.getItem('poop_sim_guest_save');
+    
+    if (localSave) {
+        const savedData = JSON.parse(localSave);
+        gameState.plops = savedData.plops || 0;
+        gameState.pps = savedData.pps || 0;
+        gameState.clickPower = savedData.clickPower || 1;
+        
+        // Catch up item prices based on their saved stats
+        recalculateUpgradeCosts();
+    } else {
+        // Fresh start for new guests
+        gameState.plops = 0;
+        gameState.pps = 0;
+        gameState.clickPower = 1;
+    }
+
+    // Hide login screen and show the game
+    document.getElementById('auth-overlay').style.display = 'none';
+    document.getElementById('game-container').style.display = 'block';
+    document.getElementById('display-user').textContent = currentUser;
+    
+    updateUI();
+}
+
+// 2. Modify your existing saveGame() function to support both Database AND Guest saves
 async function saveGame() {
     if (!currentUser) return;
-    await fetch(`${API_URL}/save`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            username: currentUser,
+
+    if (currentUser === "Guest Player") {
+        // Save locally in the browser's cache memory
+        const guestData = {
             plops: gameState.plops,
             pps: gameState.pps,
             clickPower: gameState.clickPower
-        })
-    });
-    alert("Game Saved Successfully!");
+        };
+        localStorage.setItem('poop_sim_guest_save', JSON.stringify(guestData));
+        alert("Guest Progress Saved locally in your browser! 📁");
+    } else {
+        // Save to your external Node.js database if they logged in
+        try {
+            await fetch(`${API_URL}/save`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: currentUser,
+                    plops: gameState.plops,
+                    pps: gameState.pps
+                })
+            });
+            alert("Account Progress Saved to Server Database! 💾");
+        } catch {
+            alert("Could not connect to server to save cloud backup.");
+        }
+    }
 }
-
 // Core Tycoon Loop Logic
 document.getElementById('main-emoji').addEventListener('click', (e) => {
     gameState.plops += gameState.clickPower; // Uses clickPower instead of hardcoded 1

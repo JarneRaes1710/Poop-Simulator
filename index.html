@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Poop Simulator MMO</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
     <div id="auth-overlay" class="overlay">
@@ -17,13 +19,20 @@
                 <button onclick="handleAuth('login')">Log In</button>
                 <button onclick="handleAuth('register')">Register</button>
             </div>
+            <div style="margin-top: 12px;">
+                <button onclick="playAsGuest()"
+                    style="width: 100%; background: #a39284; color: #140d07; border: none; padding: 12px; font-weight: 700; font-size: 0.95rem; border-radius: 8px; cursor: pointer; transition: var(--transition-smooth);">
+                    🏃‍♂️ Play as Guest (No Save)
+                </button>
+            </div>
             <p id="auth-error" class="error"></p>
         </div>
     </div>
 
     <div id="game-container" class="sim-container" style="display: none;">
         <header>
-            <div class="user-bar">Player: <span id="display-user">Guest</span> | <button onclick="saveGame()">💾 Save Progress</button></div>
+            <div class="user-bar">Player: <span id="display-user">Guest</span> | <button onclick="saveGame()">💾 Save
+                    Progress</button></div>
             <h1>Poop Simulator</h1>
             <div class="stats">
                 <p>Total Plops: <span id="plop-count">0</span></p>
@@ -48,19 +57,31 @@
 
             <h2>The Expanded Shop</h2>
             <div class="upgrade-card" id="upgrade-coffee">
-                <div class="upgrade-info"><h3>☕ Strong Coffee</h3><p>Cost: <span class="cost">15</span></p><small>+1 PPS</small></div>
+                <div class="upgrade-info">
+                    <h3>☕ Strong Coffee</h3>
+                    <p>Cost: <span class="cost">15</span></p><small>+1 PPS</small>
+                </div>
                 <button class="buy-btn" onclick="buyUpgrade('coffee')">Buy</button>
             </div>
             <div class="upgrade-card" id="upgrade-taco">
-                <div class="upgrade-info"><h3>🌮 Taco Tuesday</h3><p>Cost: <span class="cost">100</span></p><small>+8 PPS</small></div>
+                <div class="upgrade-info">
+                    <h3>🌮 Taco Tuesday</h3>
+                    <p>Cost: <span class="cost">100</span></p><small>+8 PPS</small>
+                </div>
                 <button class="buy-btn" onclick="buyUpgrade('taco')">Buy</button>
             </div>
             <div class="upgrade-card" id="upgrade-laxative">
-                <div class="upgrade-info"><h3>🧪 Industrial Laxatives</h3><p>Cost: <span class="cost">500</span></p><small>+50 PPS</small></div>
+                <div class="upgrade-info">
+                    <h3>🧪 Industrial Laxatives</h3>
+                    <p>Cost: <span class="cost">500</span></p><small>+50 PPS</small>
+                </div>
                 <button class="buy-btn" onclick="buyUpgrade('laxative')">Buy</button>
             </div>
             <div class="upgrade-card" id="upgrade-chipotle">
-                <div class="upgrade-info"><h3>🌯 Chipotle Vortex</h3><p>Cost: <span class="cost">2500</span></p><small>+300 PPS</small></div>
+                <div class="upgrade-info">
+                    <h3>🌯 Chipotle Vortex</h3>
+                    <p>Cost: <span class="cost">2500</span></p><small>+300 PPS</small>
+                </div>
                 <button class="buy-btn" onclick="buyUpgrade('chipotle')">Buy</button>
             </div>
         </section>
@@ -68,4 +89,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>
