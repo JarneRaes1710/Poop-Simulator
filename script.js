@@ -2,10 +2,15 @@ let currentUser = null;
 let gameState = {
     plops: 0,
     pps: 0,
+    clickPower: 1, // Start with 1 plop per click
     upgrades: {
         coffee: { cost: 15, ppsReward: 1, count: 0, elementId: 'upgrade-coffee' },
         taco: { cost: 100, ppsReward: 8, count: 0, elementId: 'upgrade-taco' },
-        laxative: { cost: 500, ppsReward: 50, count: 0, elementId: 'upgrade-laxative' }
+        laxative: { cost: 500, ppsReward: 50, count: 0, elementId: 'upgrade-laxative' },
+        chipotle: { cost: 2500, ppsReward: 300, count: 0, elementId: 'upgrade-chipotle' } // New passive
+    },
+    clickUpgrades: {
+        bidet: { cost: 25, clickReward: 1, count: 0, elementId: 'upgrade-bidet' } // New click enhancer
     }
 };
 
@@ -68,9 +73,10 @@ async function saveGame() {
 }
 
 // Core Tycoon Loop Logic
-document.getElementById('main-emoji').addEventListener('click', () => {
-    gameState.plops += 1;
+document.getElementById('main-emoji').addEventListener('click', (e) => {
+    gameState.plops += gameState.clickPower; // Uses clickPower instead of hardcoded 1
     updateUI();
+    spawnPoopParticle(e);
 });
 
 function buyUpgrade(type) {
@@ -84,12 +90,34 @@ function buyUpgrade(type) {
     }
 }
 
+function buyClickUpgrade(type) {
+    const upgrade = gameState.clickUpgrades[type];
+    if (gameState.plops >= upgrade.cost) {
+        gameState.plops -= upgrade.cost;
+        upgrade.count++;
+        gameState.clickPower += upgrade.clickReward; // Increase manual click damage
+        upgrade.cost = Math.floor(upgrade.cost * 1.3); // Click upgrades scale slightly harder (30%)
+        updateUI();
+    }
+}
+
 function updateUI() {
     document.getElementById('plop-count').textContent = Math.floor(gameState.plops);
     document.getElementById('pps-count').textContent = gameState.pps;
 
+    // Check passive upgrades
     for (let key in gameState.upgrades) {
         const upgrade = gameState.upgrades[key];
+        const card = document.getElementById(upgrade.elementId);
+        if(!card) continue;
+        const button = card.querySelector('.buy-btn');
+        card.querySelector('.cost').textContent = upgrade.cost;
+        button.disabled = gameState.plops < upgrade.cost;
+    }
+
+    // Check click upgrades
+    for (let key in gameState.clickUpgrades) {
+        const upgrade = gameState.clickUpgrades[key];
         const card = document.getElementById(upgrade.elementId);
         if(!card) continue;
         const button = card.querySelector('.buy-btn');
